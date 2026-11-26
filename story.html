@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Washington BEV Charging Survey Priorities</title>
+<meta name="description" content="A scroll story on Washington BEV growth after the federal EV tax credit ended, and where to survey charging first.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-bleed hero, then a two-column scroll story (text steps left, sticky chart right), then a closing panel.
+   Single deliberate dark look: deep harbor teal, chalk text, teal for growth, coral for the drop. */
+:root{
+  --bg:#0B1A1D; --bg2:#10252A; --ink:#E9F1EE; --muted:#8EA7A2; --faint:#5C7470; --grid:#1B3237;
+  --g7:#52E0C9; --g5:#3E8F86; --other:#34494A; --drop:#FF6B57; --amber:#F2B95B;
+  --display:"Barlow Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--g7)}
+.gut{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+
+/* Hero */
+.hero{min-height:92vh;display:grid;align-content:center;gap:28px;padding-block:72px 48px;
+  background:radial-gradient(1200px 600px at 85% 10%,rgba(82,224,201,.10),transparent 60%),radial-gradient(900px 500px at 0% 100%,rgba(255,107,87,.08),transparent 60%)}
+.hero .in{max-width:1180px;margin:0 auto;width:100%;display:grid;gap:26px}
+.kick{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-family:var(--display);font-weight:700;font-size:clamp(40px,6.4vw,88px);line-height:.95;margin:0;letter-spacing:-.01em;text-wrap:balance;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--g7)}
+.hero .sub{font-size:clamp(17px,2vw,21px);color:var(--muted);max-width:44ch;margin:0}
+.big{display:flex;align-items:flex-end;gap:clamp(12px,3vw,36px);flex-wrap:wrap}
+.big .n{font-family:var(--display);font-weight:600;font-size:clamp(56px,10vw,132px);line-height:.85;font-variant-numeric:tabular-nums}
+.big .n.was{color:var(--muted)} .big .n.now{color:var(--drop)}
+.big .arr{font-family:var(--display);font-size:clamp(36px,6vw,80px);color:var(--faint);line-height:1}
+.big .u{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;padding-bottom:8px}
+.by{font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+.cue{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
+.cue i{display:block;width:1px;height:36px;background:linear-gradient(var(--muted),transparent)}
+
+/* Story */
+.story{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px}
+.steps{padding-block:12vh 30vh}
+.step{min-height:88vh;display:flex;align-items:center}
+.step .card{display:grid;gap:14px;opacity:.28;transition:opacity .5s ease}
+.step.on .card{opacity:1}
+.step .no{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.step .no b{color:var(--g7);font-weight:500}
+.step h2{font-family:var(--display);font-weight:600;font-size:clamp(34px,4vw,50px);line-height:1;margin:0;text-transform:uppercase;text-wrap:balance}
+.step p{margin:0;font-size:17px;max-width:46ch;color:#CFDCD8}
+.stats{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:4px}
+.stat{display:grid}
+.stat .v{font-family:var(--display);font-weight:600;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.stat .l{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+.c7{color:var(--g7)} .c5{color:var(--g5)} .cd{color:var(--drop)} .ca{color:var(--amber)}
+.stage{position:sticky;top:0;height:100vh;display:flex;align-items:center}
+.frame{width:100%;background:linear-gradient(180deg,var(--bg2),rgba(16,37,42,.55));border:1px solid var(--grid);border-radius:14px;padding:18px 18px 10px}
+.frame .ttl{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);min-height:18px;margin-bottom:6px}
+#chart{width:100%;height:auto;display:block;overflow:visible}
+#chart text{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+#chart .lab{font-family:var(--sans);font-size:12.5px;fill:var(--ink)}
+#chart .labb{font-family:var(--sans);font-size:13px;fill:var(--ink);font-weight:600}
+#chart .huge{font-family:var(--display);font-weight:600;font-size:46px}
+#chart .mid{font-family:var(--display);font-weight:600;font-size:26px}
+#chart .halo{paint-order:stroke;stroke:var(--bg2);stroke-width:6px;stroke-linejoin:round}
+#chart .grid line{stroke:var(--grid)}
+#chart .axis path{display:none}
+#chart .axis line{stroke:var(--grid)}
+
+/* Closing */
+.close{padding-block:16vh 12vh;background:linear-gradient(180deg,transparent,rgba(82,224,201,.06))}
+.close .in{max-width:1180px;margin:0 auto;display:grid;gap:26px}
+.close h2{font-family:var(--display);font-weight:700;font-size:clamp(44px,7vw,96px);line-height:.95;margin:0;text-transform:uppercase}
+.links{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:999px;border:1px solid var(--g7);color:var(--g7);text-decoration:none;font-weight:500}
+.btn:hover,.btn:focus-visible{background:var(--g7);color:var(--bg);outline:none}
+.src{font-size:13px;color:var(--muted);max-width:90ch;display:grid;gap:6px}
+.src p{margin:0}
+
+@media (max-width:900px){
+  .story{grid-template-columns:minmax(0,1fr);gap:0}
+  .stage{order:-1;height:auto;top:0;z-index:2;padding-block:10px;background:linear-gradient(180deg,var(--bg) 80%,transparent)}
+  .frame{padding:12px 10px 6px}
+  .steps{padding-block:4vh 40vh}
+  .step{min-height:70vh}
+  .step .card{background:rgba(11,26,29,.88);padding:16px;border-radius:12px;border:1px solid var(--grid)}
+}
+@media (prefers-reduced-motion:reduce){.step .card{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="hero gut">
+  <div class="in">
+    <div class="kick">Washington State · Battery-electric vehicles · Nov 2026</div>
+    <h1>BEV growth after the tax credit:<br><em>where to survey charging first</em></h1>
+    <p class="sub">A briefing for the state clean-transportation office, based on county registrations from Oct 2025 to Oct 2026.</p>
+    <div class="big" aria-label="Average new BEVs per month fell from 3,572 to 1,823">
+      <div><div class="u">New BEVs a month, before</div><div class="n was" id="h-before">3,572</div></div>
+      <div class="arr">→</div>
+      <div><div class="u">after Sep 30, 2025</div><div class="n now" id="h-after">1,823</div></div>
+    </div>
+    <div class="by">Jinseong Park · DA321 Comprehensive Challenge · Data: WA Department of Licensing, downloaded 2026-11-19</div>
+    <div class="cue"><i></i>Scroll</div>
+  </div>
+</header>
+
+<main class="story gut">
+  <div class="steps">
+    <section class="step" data-scene="trend"><div class="card">
+      <div class="no"><b>01</b> · The drop</div>
+      <h2>Growth fell by almost half</h2>
+      <p>What happened in Washington after the federal EV tax credit ended last September? Battery-electric growth fell by almost half, from about 3,600 new BEVs a month to about 1,800.</p>
+    </div></section>
+
+    <section class="step" data-scene="steady"><div class="card">
+      <div class="no"><b>02</b> · Still growing</div>
+      <h2>Slower, but still growing</h2>
+      <p>Additions held near 2,000–2,500 a month. The Aug–Oct dip hit all passenger cars.</p>
+    </div></section>
+
+    <section class="step" data-scene="drop"><div class="card">
+      <div class="no"><b>03</b> · Who slowed</div>
+      <h2>The slowdown was not shared equally</h2>
+      <p>About 90% of the lost additions came from the five largest counties, led by King. Those five kept only 45% of their earlier pace. Seven mid-sized counties, led by Benton, kept 91%.</p>
+    </div></section>
+
+    <section class="step" data-scene="lists"><div class="card">
+      <div class="no"><b>04</b> · The problem</div>
+      <h2>One measure always misses someone</h2>
+      <p>Those five large counties still receive about 70% of new BEVs, so if we rank counties only by vehicles added, we miss places like Benton that are still growing fast. If we rank only by growth rate, tiny counties like Garfield, which added just four cars, jump to the top. Either way, we miss someone.</p>
+    </div></section>
+
+    <section class="step" data-scene="scatter"><div class="card">
+      <div class="no"><b>05</b> · Both measures</div>
+      <h2>Seven counties pass both tests</h2>
+      <p>So I used both measures. Seven counties are above the median on both vehicles added and growth rate.</p>
+      <div class="stats">
+        <div class="stat"><span class="v" id="s-medA">184</span><span class="l">median BEVs added</span></div>
+        <div class="stat"><span class="v" id="s-medG">20.8%</span><span class="l">median growth</span></div>
+      </div>
+    </div></section>
+
+    <section class="step" data-scene="scenario"><div class="card">
+      <div class="no"><b>06</b> · Looking ahead</div>
+      <h2>Demand grows either way</h2>
+      <p>At the current pace, Washington will add about 88,000 more BEVs by 2030. If a change in administration brings the tax credit back in 2029, and additions in the final year recover to their earlier pace, the total increase would be 24% higher than the baseline. Charging demand would grow under either scenario, so we should not wait.</p>
+    </div></section>
+
+    <section class="step" data-scene="ask"><div class="card">
+      <div class="no"><b>07</b> · The ask</div>
+      <h2>Two surveys by Feb 28, 2027</h2>
+      <p>I ask the clean-transportation office to do two things by February 28, 2027. First, survey charging access in the seven growing counties. Second, review the capacity and use of existing chargers in the five largest counties. Then use the findings to allocate the charging budget.</p>
+    </div></section>
+
+    <section class="step" data-scene="rural"><div class="card">
+      <div class="no"><b>08</b> · Who gets left out</div>
+      <h2>Don't forget rural counties</h2>
+      <p>Finally, please do not forget rural counties left out by our criteria. Starting with eastern Washington, survey the distance to the nearest public charger and the needs of households that cannot charge at home. Please also discuss support tailored to rural counties, including help with home charger installation costs.</p>
+      <div class="stats">
+        <div class="stat"><span class="v ca" id="s-east">9 of 12</span><span class="l">fast-growing, low-volume counties are in eastern WA</span></div>
+      </div>
+    </div></section>
+  </div>
+
+  <div class="stage">
+    <div class="frame">
+      <div class="ttl" id="ttl"></div>
+      <svg id="chart" viewBox="0 0 760 520" role="img" aria-label="Chart for the current chapter of the story"></svg>
+    </div>
+  </div>
+</main>
+
+<section class="close gut">
+  <div class="in">
+    <div class="kick">End</div>
+    <h2>Thank you.</h2>
+    <div class="links">
+      <a class="btn" href="./">Open the interactive dashboard →</a>
+    </div>
+    <div class="src">
+      <p><b>Data.</b> WA Department of Licensing, Electric Vehicle Population Size History by County (passenger vehicles), downloaded 2026-11-19. BEVs added = registered BEVs at the end of October minus the year before. Pace kept = BEVs added after the credit ended ÷ BEVs added the year before.</p>
+      <p><b>Context.</b> [R1] KUOW, Sep 24, 2025, on the rush before the federal credit and the sales-tax exemption ended. [R2] WA Department of Ecology, ZEVergreen (Jul 2026), p.13, on charging gaps reported by rural residents.</p>
+      <p><b>Limits.</b> No charger counts, usage or home-charging data, so this story picks where to survey first, not how many chargers to build. 2030 figures repeat the latest 12-month additions (±30% sensitivity).</p>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>const DATA = {"C": [{"county": "Adams", "region": "Eastern", "group": "Other", "b24": 46, "b25": 75, "b26": 106, "ab": 29, "aa": 31, "gb": 63.04, "ga": 41.33, "ev": 0.73}, {"county": "Asotin", "region": "Eastern", "group": "Other", "b24": 59, "b25": 67, "b26": 84, "ab": 8, "aa": 17, "gb": 13.56, "ga": 25.37, "ev": 0.84}, {"county": "Benton", "region": "Central", "group": "7 growing", "b24": 1875, "b25": 2671, "b26": 3367, "ab": 796, "aa": 696, "gb": 42.45, "ga": 26.06, "ev": 2.6}, {"county": "Chelan", "region": "Central", "group": "7 growing", "b24": 963, "b25": 1262, "b26": 1544, "ab": 299, "aa": 282, "gb": 31.05, "ga": 22.35, "ev": 2.88}, {"county": "Clallam", "region": "Southwest", "group": "Other", "b24": 863, "b25": 1090, "b26": 1278, "ab": 227, "aa": 188, "gb": 26.3, "ga": 17.25, "ev": 3.18}, {"county": "Clark", "region": "Southwest", "group": "5 largest", "b24": 9438, "b25": 12240, "b26": 14130, "ab": 2802, "aa": 1890, "gb": 29.69, "ga": 15.44, "ev": 4.9}, {"county": "Columbia", "region": "Eastern", "group": "Other", "b24": 11, "b25": 15, "b26": 18, "ab": 4, "aa": 3, "gb": 36.36, "ga": 20.0, "ev": 0.8}, {"county": "Cowlitz", "region": "Southwest", "group": "7 growing", "b24": 807, "b25": 1023, "b26": 1282, "ab": 216, "aa": 259, "gb": 26.77, "ga": 25.32, "ev": 1.93}, {"county": "Douglas", "region": "Central", "group": "Other", "b24": 341, "b25": 448, "b26": 541, "ab": 107, "aa": 93, "gb": 31.38, "ga": 20.76, "ev": 1.93}, {"county": "Ferry", "region": "Eastern", "group": "Other", "b24": 29, "b25": 34, "b26": 45, "ab": 5, "aa": 11, "gb": 17.24, "ga": 32.35, "ev": 1.09}, {"county": "Franklin", "region": "Eastern", "group": "7 growing", "b24": 548, "b25": 874, "b26": 1085, "ab": 326, "aa": 211, "gb": 59.49, "ga": 24.14, "ev": 1.73}, {"county": "Garfield", "region": "Eastern", "group": "Other", "b24": 0, "b25": 1, "b26": 5, "ab": 1, "aa": 4, "gb": null, "ga": 400.0, "ev": 0.39}, {"county": "Grant", "region": "Eastern", "group": "7 growing", "b24": 521, "b25": 710, "b26": 925, "ab": 189, "aa": 215, "gb": 36.28, "ga": 30.28, "ev": 1.43}, {"county": "Grays Harbor", "region": "Southwest", "group": "Other", "b24": 521, "b25": 691, "b26": 823, "ab": 170, "aa": 132, "gb": 32.63, "ga": 19.1, "ev": 2.06}, {"county": "Island", "region": "Northwest", "group": "Other", "b24": 1642, "b25": 2132, "b26": 2380, "ab": 490, "aa": 248, "gb": 29.84, "ga": 11.63, "ev": 4.59}, {"county": "Jefferson", "region": "Southwest", "group": "Other", "b24": 807, "b25": 999, "b26": 1183, "ab": 192, "aa": 184, "gb": 23.79, "ga": 18.42, "ev": 5.47}, {"county": "King", "region": "Northwest", "group": "5 largest", "b24": 87251, "b25": 106885, "b26": 114063, "ab": 19634, "aa": 7178, "gb": 22.5, "ga": 6.72, "ev": 9.2}, {"county": "Kitsap", "region": "Northwest", "group": "5 largest", "b24": 5094, "b25": 6526, "b26": 7502, "ab": 1432, "aa": 976, "gb": 28.11, "ga": 14.96, "ev": 4.76}, {"county": "Kittitas", "region": "Central", "group": "Other", "b24": 606, "b25": 768, "b26": 943, "ab": 162, "aa": 175, "gb": 26.73, "ga": 22.79, "ev": 3.19}, {"county": "Klickitat", "region": "Central", "group": "Other", "b24": 236, "b25": 315, "b26": 391, "ab": 79, "aa": 76, "gb": 33.47, "ga": 24.13, "ev": 2.9}, {"county": "Lewis", "region": "Southwest", "group": "7 growing", "b24": 548, "b25": 756, "b26": 966, "ab": 208, "aa": 210, "gb": 37.96, "ga": 27.78, "ev": 1.97}, {"county": "Lincoln", "region": "Eastern", "group": "Other", "b24": 32, "b25": 46, "b26": 58, "ab": 14, "aa": 12, "gb": 43.75, "ga": 26.09, "ev": 1.05}, {"county": "Mason", "region": "Southwest", "group": "7 growing", "b24": 719, "b25": 967, "b26": 1179, "ab": 248, "aa": 212, "gb": 34.49, "ga": 21.92, "ev": 2.77}, {"county": "Okanogan", "region": "Central", "group": "Other", "b24": 212, "b25": 255, "b26": 330, "ab": 43, "aa": 75, "gb": 20.28, "ga": 29.41, "ev": 1.43}, {"county": "Pacific", "region": "Southwest", "group": "Other", "b24": 130, "b25": 204, "b26": 246, "ab": 74, "aa": 42, "gb": 56.92, "ga": 20.59, "ev": 2.11}, {"county": "Pend Oreille", "region": "Eastern", "group": "Other", "b24": 51, "b25": 63, "b26": 91, "ab": 12, "aa": 28, "gb": 23.53, "ga": 44.44, "ev": 0.95}, {"county": "Pierce", "region": "Southwest", "group": "5 largest", "b24": 12773, "b25": 16597, "b26": 18712, "ab": 3824, "aa": 2115, "gb": 29.94, "ga": 12.74, "ev": 3.98}, {"county": "San Juan", "region": "Northwest", "group": "Other", "b24": 781, "b25": 912, "b26": 979, "ab": 131, "aa": 67, "gb": 16.77, "ga": 7.35, "ev": 8.35}, {"county": "Skagit", "region": "Northwest", "group": "Other", "b24": 1698, "b25": 2202, "b26": 2522, "ab": 504, "aa": 320, "gb": 29.68, "ga": 14.53, "ev": 3.22}, {"county": "Skamania", "region": "Southwest", "group": "Other", "b24": 168, "b25": 200, "b26": 236, "ab": 32, "aa": 36, "gb": 19.05, "ga": 18.0, "ev": 3.32}, {"county": "Snohomish", "region": "Northwest", "group": "5 largest", "b24": 21513, "b25": 27812, "b26": 30822, "ab": 6299, "aa": 3010, "gb": 29.28, "ga": 10.82, "ev": 5.98}, {"county": "Spokane", "region": "Eastern", "group": "Other", "b24": 3991, "b25": 5142, "b26": 5968, "ab": 1151, "aa": 826, "gb": 28.84, "ga": 16.06, "ev": 2.25}, {"county": "Stevens", "region": "Eastern", "group": "Other", "b24": 166, "b25": 225, "b26": 277, "ab": 59, "aa": 52, "gb": 35.54, "ga": 23.11, "ev": 1.15}, {"county": "Thurston", "region": "Southwest", "group": "Other", "b24": 4993, "b25": 6469, "b26": 7322, "ab": 1476, "aa": 853, "gb": 29.56, "ga": 13.19, "ev": 4.33}, {"county": "Wahkiakum", "region": "Southwest", "group": "Other", "b24": 42, "b25": 59, "b26": 62, "ab": 17, "aa": 3, "gb": 40.48, "ga": 5.08, "ev": 2.85}, {"county": "Walla Walla", "region": "Eastern", "group": "Other", "b24": 355, "b25": 467, "b26": 567, "ab": 112, "aa": 100, "gb": 31.55, "ga": 21.41, "ev": 1.93}, {"county": "Whatcom", "region": "Northwest", "group": "Other", "b24": 3778, "b25": 4797, "b26": 5513, "ab": 1019, "aa": 716, "gb": 26.97, "ga": 14.93, "ev": 4.14}, {"county": "Whitman", "region": "Eastern", "group": "Other", "b24": 264, "b25": 347, "b26": 425, "ab": 83, "aa": 78, "gb": 31.44, "ga": 22.48, "ev": 2.3}, {"county": "Yakima", "region": "Central", "group": "Other", "b24": 944, "b25": 1332, "b26": 1587, "ab": 388, "aa": 255, "gb": 41.1, "ga": 19.14, "ev": 1.09}], "M": [{"m": "2023-11-30", "v": 3065, "cars": 1547}, {"m": "2023-12-31", "v": 3388, "cars": 2545}, {"m": "2024-01-31", "v": 4247, "cars": 2534}, {"m": "2024-02-29", "v": 3395, "cars": -6652}, {"m": "2024-03-31", "v": 2542, "cars": 559}, {"m": "2024-04-30", "v": 3585, "cars": 9792}, {"m": "2024-05-31", "v": 3322, "cars": 1592}, {"m": "2024-06-30", "v": 2295, "cars": -1716}, {"m": "2024-07-31", "v": 4249, "cars": 6082}, {"m": "2024-08-31", "v": 4607, "cars": 3491}, {"m": "2024-09-30", "v": 4383, "cars": 3493}, {"m": "2024-10-31", "v": 4745, "cars": 7796}, {"m": "2024-11-30", "v": 3278, "cars": 2274}, {"m": "2024-12-31", "v": 3414, "cars": 7613}, {"m": "2025-01-31", "v": 5139, "cars": 13867}, {"m": "2025-02-28", "v": 2970, "cars": 1732}, {"m": "2025-03-31", "v": 2630, "cars": -6377}, {"m": "2025-04-30", "v": 3999, "cars": 17388}, {"m": "2025-05-31", "v": 2836, "cars": 3105}, {"m": "2025-06-30", "v": 2687, "cars": 7883}, {"m": "2025-07-31", "v": 4245, "cars": 9717}, {"m": "2025-08-31", "v": 3693, "cars": 3290}, {"m": "2025-09-30", "v": 3388, "cars": 3342}, {"m": "2025-10-31", "v": 4583, "cars": 4231}, {"m": "2025-11-30", "v": 2054, "cars": -4118}, {"m": "2025-12-31", "v": 1159, "cars": 4135}, {"m": "2026-01-31", "v": 2864, "cars": 1734}, {"m": "2026-02-28", "v": 1956, "cars": 3887}, {"m": "2026-03-31", "v": 1714, "cars": -12247}, {"m": "2026-04-30", "v": 3839, "cars": 7075}, {"m": "2026-05-31", "v": 2243, "cars": -15134}, {"m": "2026-06-30", "v": 2244, "cars": -1269}, {"m": "2026-07-31", "v": 2897, "cars": -15860}, {"m": "2026-08-31", "v": 816, "cars": -33050}, {"m": "2026-09-30", "v": -363, "cars": -39939}, {"m": "2026-10-31", "v": 456, "cars": -74076}]};</script>
+<script>
+(function(){
+const C = DATA.C, M = DATA.M;
+const fmt = d3.format(','), pct0 = v => Math.round(v * 100) + '%';
+const sum = (a, f) => d3.sum(a, f);
+const G7 = C.filter(d => d.group === '7 growing'), G5 = C.filter(d => d.group === '5 largest');
+const T = {aa: sum(C, d => d.aa), ab: sum(C, d => d.ab), b26: sum(C, d => d.b26)};
+const pace5 = sum(G5, d => d.aa) / sum(G5, d => d.ab), pace7 = sum(G7, d => d.aa) / sum(G7, d => d.ab);
+const drop = C.map(d => ({...d, drop: d.ab - d.aa})).sort((a, b) => b.drop - a.drop);
+const dropTot = sum(drop, d => d.drop), drop5 = sum(G5, d => d.ab - d.aa) / dropTot;
+const medA = d3.median(C, d => d.aa), medG = d3.median(C, d => d.ga);
+const parse = s => new Date(s + 'T00:00:00Z');
+const months = M.map(d => ({date: parse(d.m), v: d.v, m: d.m}));
+const avg = (a, b) => d3.mean(months.filter(d => d.m >= a && d.m <= b), d => d.v);
+const before = avg('2024-11-30', '2025-10-31'), after = avg('2025-11-30', '2026-10-31');
+const B = T.aa, A = T.ab;
+const share5 = sum(G5, d => d.aa) / T.aa, share7 = sum(G7, d => d.aa) / T.aa;
+
+// Fill the numbers that appear in the text from the data
+const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+set('h-before', fmt(Math.round(before))); set('h-after', fmt(Math.round(after)));
+set('s-drop5', pct0(drop5)); set('s-pace5', pct0(pace5)); set('s-pace7', pct0(pace7));
+set('s-medA', fmt(medA));
+const fastAll = C.filter(d => d.aa <= medA && d.ga > medG);
+set('s-east', fastAll.filter(d => d.region === 'Eastern').length + ' of ' + fastAll.length); set('s-medG', medG.toFixed(1) + '%');
+
+const W = 760, H = 520, svg = d3.select('#chart');
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dur = reduce ? 0 : 900;
+const col = g => g === '7 growing' ? 'var(--g7)' : g === '5 largest' ? 'var(--g5)' : 'var(--other)';
+
+function reset(title){
+  svg.interrupt().selectAll('*').interrupt();
+  svg.selectAll('*').remove();
+  d3.select('#ttl').text(title);
+  return svg.append('g');
+}
+
+const scenes = {
+  trend(){
+    const g = reset('Monthly net BEV additions, Washington');
+    const m = {l: 56, r: 16, t: 24, b: 36};
+    const x = d3.scaleUtc().domain(d3.extent(months, d => d.date)).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([-1000, 6000]).range([H - m.b, m.t]);
+    g.append('g').attr('class', 'grid').selectAll('line').data(y.ticks(7)).join('line')
+      .attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y);
+    g.append('g').attr('class', 'axis').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(7).tickSize(0).tickPadding(8).tickFormat(d3.format(',')));
+    g.append('g').attr('class', 'axis').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(d3.utcMonth.every(6)).tickSize(0).tickPadding(10).tickFormat(d3.utcFormat('%b %Y')));
+    g.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(0)).attr('y2', y(0)).style('stroke', 'var(--faint)');
+    const cut = x(parse('2025-09-30'));
+    g.append('rect').attr('x', cut).attr('y', m.t).attr('width', W - m.r - cut).attr('height', H - m.b - m.t).style('fill', 'rgba(255,107,87,.06)');
+    g.append('line').attr('x1', cut).attr('x2', cut).attr('y1', m.t).attr('y2', H - m.b).style('stroke', 'var(--drop)').attr('stroke-dasharray', '3 4');
+    g.append('text').attr('x', cut + 8).attr('y', m.t + 14).attr('class', 'lab').style('fill', 'var(--drop)').text('Sep 30, 2025: federal credit ends [R1]');
+    const line = d3.line().x(d => x(d.date)).y(d => y(d.v));
+    const p = g.append('path').datum(months).attr('d', line).attr('fill', 'none').style('stroke', 'var(--ink)').attr('stroke-width', 2.4).attr('stroke-linejoin', 'round');
+    const L = p.node().getTotalLength();
+    p.attr('stroke-dasharray', `${L} ${L}`).attr('stroke-dashoffset', L).transition().duration(dur * 1.6).ease(d3.easeCubicOut).attr('stroke-dashoffset', 0);
+    const avgLine = (a, b, v, c, label, dy) => {
+      const ln = g.append('line').attr('x1', x(parse(a))).attr('x2', x(parse(a))).attr('y1', y(v)).attr('y2', y(v)).style('stroke', c).attr('stroke-width', 2).attr('stroke-dasharray', '6 5');
+      ln.transition().delay(dur * 1.2).duration(dur).attr('x2', x(parse(b)));
+      g.append('text').attr('x', x(parse(b))).attr('y', y(v) + dy).attr('text-anchor', 'end').attr('class', 'mid halo').style('fill', c).style('opacity', 0)
+        .text(label).transition().delay(dur * 1.8).duration(dur / 2).style('opacity', 1);
+    };
+    avgLine('2024-10-31', '2025-10-31', before, 'var(--muted)', 'avg ' + fmt(Math.round(before)) + ' / mo', -14);
+    avgLine('2025-10-31', months[months.length - 1].m, after, 'var(--drop)', 'avg ' + fmt(Math.round(after)) + ' / mo', 30);
+  },
+
+  steady(){
+    const g = reset('Monthly averages in 3-month blocks after the credit ended');
+    const blocks = [['Nov–Jan', '2025-11-30', '2026-01-31'], ['Feb–Apr', '2026-02-28', '2026-04-30'], ['May–Jul', '2026-05-31', '2026-07-31'], ['Aug–Oct', '2026-08-31', '2026-10-31']]
+      .map(([lab, a, b]) => { const r = M.filter(d => d.m >= a && d.m <= b); return {lab, bev: d3.mean(r, d => d.v), cars: d3.mean(r, d => d.cars)}; });
+    const L = 70, R = W - 30;
+    const x = d3.scaleBand().domain(blocks.map(d => d.lab)).range([L, R]).padding(.32);
+    // Top: BEVs added per month
+    const y1 = d3.scaleLinear().domain([0, 3000]).range([220, 60]);
+    g.append('text').attr('x', L - 50).attr('y', 34).attr('class', 'mid').style('fill', 'var(--ink)').text('BEVs added per month');
+    g.append('g').attr('class', 'grid').selectAll('line').data([0, 1000, 2000, 3000]).join('line').attr('x1', L).attr('x2', R).attr('y1', y1).attr('y2', y1);
+    g.append('g').attr('class', 'axis').attr('transform', `translate(${L},0)`).call(d3.axisLeft(y1).tickValues([0, 1000, 2000, 3000]).tickSize(0).tickPadding(8).tickFormat(d3.format(',')));
+    g.selectAll('rect.b').data(blocks).join('rect').attr('class', 'b').attr('x', d => x(d.lab)).attr('width', x.bandwidth()).attr('rx', 3)
+      .style('fill', (d, i) => i === 3 ? 'var(--amber)' : 'var(--g7)').attr('y', y1(0)).attr('height', 0)
+      .transition().duration(dur).delay((d, i) => i * 120).attr('y', d => y1(d.bev)).attr('height', d => y1(0) - y1(d.bev));
+    g.selectAll('text.b').data(blocks).join('text').attr('class', 'mid').attr('x', d => x(d.lab) + x.bandwidth() / 2).attr('y', d => y1(d.bev) - 8)
+      .attr('text-anchor', 'middle').style('fill', (d, i) => i === 3 ? 'var(--amber)' : 'var(--g7)').text(d => fmt(Math.round(d.bev)));
+    // Bottom: all passenger cars, change per month
+    const y2 = d3.scaleLinear().domain([-55000, 15000]).range([470, 290]);
+    g.append('text').attr('x', L - 50).attr('y', 268).attr('class', 'mid').style('fill', 'var(--ink)').text('All passenger cars, change per month');
+    g.append('g').attr('class', 'grid').selectAll('line').data([-50000, -25000, 0]).join('line').attr('x1', L).attr('x2', R).attr('y1', y2).attr('y2', y2);
+    g.append('g').attr('class', 'axis').attr('transform', `translate(${L},0)`).call(d3.axisLeft(y2).tickValues([-50000, -25000, 0]).tickSize(0).tickPadding(8).tickFormat(d3.format(',')));
+    g.append('line').attr('x1', L).attr('x2', R).attr('y1', y2(0)).attr('y2', y2(0)).style('stroke', 'var(--muted)');
+    g.selectAll('rect.c').data(blocks).join('rect').attr('class', 'c').attr('x', d => x(d.lab)).attr('width', x.bandwidth()).attr('rx', 3)
+      .style('fill', (d, i) => i === 3 ? 'var(--drop)' : 'var(--other)')
+      .attr('y', d => d.cars >= 0 ? y2(d.cars) : y2(0)).attr('height', d => Math.max(1, Math.abs(y2(d.cars) - y2(0))));
+    g.selectAll('text.c').data(blocks).join('text').attr('x', d => x(d.lab) + x.bandwidth() / 2)
+      .attr('y', d => d.cars >= 0 ? y2(d.cars) - 6 : y2(d.cars) + 16).attr('text-anchor', 'middle')
+      .style('fill', (d, i) => i === 3 ? 'var(--drop)' : 'var(--muted)').text(d => (d.cars >= 0 ? '+' : '') + fmt(Math.round(d.cars)));
+    g.selectAll('text.l').data(blocks).join('text').attr('class', 'lab').attr('x', d => x(d.lab) + x.bandwidth() / 2).attr('y', H - 10).attr('text-anchor', 'middle').text(d => d.lab);
+  },
+
+  drop(){
+    const g = reset('Where the slowdown happened');
+    const L = 40, R = W - 40, bw = R - L;
+    // Part 1: one bar = the whole drop, split by county
+    g.append('text').attr('x', L).attr('y', 44).attr('class', 'mid').style('fill', 'var(--ink)').text('The ' + fmt(dropTot) + ' fewer BEVs');
+    g.append('text').attr('x', L).attr('y', 66).text('BEVs added, year before − year after, by county');
+    const big5 = G5.map(c => ({county: c.county, v: c.ab - c.aa})).sort((a, b) => b.v - a.v);
+    const segs = [...big5, {county: 'Other 34', v: dropTot - sum(big5, d => d.v), other: true}];
+    let acc = 0, narrow = [], narrowEnd = 0;
+    const sx = v => L + v / dropTot * bw;
+    segs.forEach((d, i) => {
+      const x0 = sx(acc); acc += d.v; const x1 = sx(acc);
+      g.append('rect').attr('x', x0).attr('y', 84).attr('height', 46).attr('width', 0)
+        .style('fill', d.other ? 'var(--other)' : 'var(--drop)').style('stroke', 'var(--bg2)').attr('stroke-width', 2)
+        .transition().delay(i * 120).duration(dur / 2).attr('width', Math.max(0, x1 - x0));
+      const pc = (d.v / dropTot * 100).toFixed(1) + '%';
+      if (x1 - x0 > 70) {
+        g.append('text').attr('x', x0 + 8).attr('y', 104).attr('class', 'labb').style('fill', d.other ? 'var(--ink)' : 'var(--bg)').text(d.county);
+        g.append('text').attr('x', x0 + 8).attr('y', 121).style('fill', d.other ? 'var(--ink)' : 'var(--bg)').text(pc);
+      } else { narrow.push(d.county + ' ' + pc); narrowEnd = x1; }
+    });
+    if (narrow.length) g.append('text').attr('x', narrowEnd).attr('y', 78).attr('text-anchor', 'end').style('fill', 'var(--drop)').text(narrow.join(' · ') + ' ↓');
+    const x5 = sx(sum(big5, d => d.v));
+    g.append('line').attr('x1', L).attr('x2', x5).attr('y1', 146).attr('y2', 146).style('stroke', 'var(--drop)').attr('stroke-width', 2);
+    g.append('text').attr('x', L).attr('y', 224).style('fill', 'var(--muted)').text('5 largest = the 5 counties adding the most BEVs, Oct 2025 → Oct 2026 (Kitsap +976, next Thurston +853)');
+    g.append('text').attr('x', L).attr('y', 196).attr('class', 'huge').style('fill', 'var(--drop)').text(pct0(drop5));
+    g.append('text').attr('x', L + 96).attr('y', 182).attr('class', 'lab').text('came from the 5 largest counties');
+    g.append('text').attr('x', L + 96).attr('y', 200).attr('class', 'lab').style('fill', 'var(--muted)').text('King alone: ' + fmt(big5[0].v));
+    // Part 2: pace kept, 5 largest vs 7 growing
+    g.append('text').attr('x', L).attr('y', 268).attr('class', 'mid').style('fill', 'var(--ink)').text('Pace kept after the credit ended');
+    g.append('text').attr('x', L).attr('y', 290).text('BEVs added after ÷ BEVs added the year before');
+    const px = v => L + 150 + v * (bw - 230);
+    const rows = [{lab: '5 largest', v: pace5, c: 'var(--g5)'}, {lab: '7 growing', v: pace7, c: 'var(--g7)'}];
+    rows.forEach((d, i) => {
+      const yy = 320 + i * 74;
+      g.append('text').attr('x', L).attr('y', yy + 32).attr('class', 'labb').text(d.lab);
+      g.append('rect').attr('x', px(0)).attr('y', yy).attr('height', 48).attr('rx', 4).style('fill', 'rgba(142,167,162,.10)').attr('width', px(1) - px(0));
+      g.append('rect').attr('x', px(0)).attr('y', yy).attr('height', 48).attr('rx', 4).style('fill', d.c).attr('width', 0)
+        .transition().delay(400 + i * 200).duration(dur).attr('width', px(d.v) - px(0));
+      g.append('text').attr('x', px(d.v) + 10).attr('y', yy + 36).attr('class', 'mid').style('fill', d.c).text(pct0(d.v));
+    });
+    g.append('line').attr('x1', px(1)).attr('x2', px(1)).attr('y1', 308).attr('y2', 480).style('stroke', 'var(--ink)').attr('stroke-dasharray', '5 5').style('opacity', .7);
+    g.append('text').attr('x', px(1)).attr('y', 500).attr('text-anchor', 'middle').text('100% = same as before');
+  },
+
+  lists(){
+    const g = reset('Top 10 by each measure: only Benton is on both lists');
+    const byAdded = [...C].sort((a, b) => b.aa - a.aa).slice(0, 10);
+    const byGrowth = [...C].sort((a, b) => b.ga - a.ga).slice(0, 10);
+    const both = new Set(byAdded.map(d => d.county).filter(c => byGrowth.some(d => d.county === c)));
+    const colX = [24, 400], rowH = 38, top = 82;
+    [['BEVs added', byAdded, d => fmt(d.aa)], ['growth rate', byGrowth, d => d.ga.toFixed(1) + '%']].forEach(([title, list, val], k) => {
+      const gx = g.append('g').attr('transform', `translate(${colX[k]},0)`);
+      gx.append('text').attr('y', 34).attr('class', 'mid').style('fill', 'var(--ink)').text('Ranked by ' + title);
+      if (k === 1) gx.append('text').attr('x', 230).attr('y', 56).attr('text-anchor', 'end').text('BEVs added');
+      const r = gx.selectAll('g.r').data(list).join('g').attr('class', 'r').attr('transform', (d, i) => `translate(0,${top + i * rowH})`).style('opacity', 0);
+      r.transition().delay((d, i) => i * 60 + k * 300).duration(dur / 2).style('opacity', 1);
+      r.append('rect').attr('x', -10).attr('y', -22).attr('width', 330).attr('height', rowH - 6).attr('rx', 6)
+        .style('fill', d => both.has(d.county) ? 'rgba(82,224,201,.16)' : d.county === 'Garfield' ? 'rgba(242,185,91,.14)' : 'transparent');
+      r.append('text').attr('x', 0).attr('y', 0).text((d, i) => String(i + 1).padStart(2, '0'));
+      r.append('text').attr('x', 34).attr('y', 0).attr('class', d => both.has(d.county) || d.county === 'Garfield' ? 'labb' : 'lab').text(d => d.county);
+      r.append('text').attr('x', 310).attr('y', 0).attr('text-anchor', 'end').attr('class', 'lab')
+        .style('fill', d => both.has(d.county) ? 'var(--g7)' : d.county === 'Garfield' ? 'var(--amber)' : 'var(--ink)').text(val);
+      if (k === 1) r.append('text').attr('x', 230).attr('y', 0).attr('text-anchor', 'end')
+        .style('fill', d => d.county === 'Garfield' ? 'var(--amber)' : d.aa < 100 ? 'var(--ink)' : 'var(--muted)').text(d => '+' + fmt(d.aa));
+    });
+    g.append('text').attr('x', 24).attr('y', H - 8).attr('class', 'lab').style('fill', 'var(--muted)')
+      .text(`Share of new BEVs after the credit ended: 5 largest ${pct1(share5)}, 7 growing ${pct1(share7)}. Bold white = fewer than 100 BEVs added.`);
+  },
+
+  scatter(highlight){
+    const rural = highlight === 'rural';
+    const g = reset(rural ? 'Fast-growing but few BEVs: most are in eastern Washington' : 'BEVs added vs growth, by county (Garfield left out)');
+    const pts = C.filter(d => d.county !== 'Garfield');
+    const m = {l: 56, r: 20, t: 20, b: 46};
+    const x = d3.scaleLog().domain([2, 12000]).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([0, 48]).range([H - m.b, m.t]);
+    g.append('g').attr('class', 'grid').selectAll('line').data([0, 10, 20, 30, 40]).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y);
+    g.append('g').attr('class', 'axis').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues([0, 10, 20, 30, 40]).tickSize(0).tickPadding(8).tickFormat(d => d + '%'));
+    g.append('g').attr('class', 'axis').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([10, 100, 1000, 10000]).tickSize(0).tickPadding(10).tickFormat(d3.format(',')));
+    g.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 6).attr('text-anchor', 'middle').text('BEVs added, Oct 2025 → Oct 2026 (log scale)');
+    const zone = rural ? {x0: m.l, x1: x(medA), y0: m.t, y1: y(medG)} : {x0: x(medA), x1: W - m.r, y0: m.t, y1: y(medG)};
+    g.append('rect').attr('x', zone.x0).attr('y', zone.y0).attr('width', zone.x1 - zone.x0).attr('height', zone.y1 - zone.y0)
+      .style('fill', rural ? 'rgba(242,185,91,.08)' : 'rgba(82,224,201,.08)').style('opacity', 0).transition().delay(dur / 2).duration(dur).style('opacity', 1);
+    g.append('line').attr('x1', x(medA)).attr('x2', x(medA)).attr('y1', m.t).attr('y2', H - m.b).style('stroke', 'var(--ink)').attr('stroke-dasharray', '5 5').style('opacity', .7);
+    g.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(medG)).attr('y2', y(medG)).style('stroke', 'var(--ink)').attr('stroke-dasharray', '5 5').style('opacity', .7);
+    g.append('text').attr('x', x(medA) + 6).attr('y', H - m.b - 8).text('median ' + fmt(medA));
+    g.append('text').attr('x', W - m.r).attr('y', y(medG) - 8).attr('text-anchor', 'end').text('median ' + medG.toFixed(1) + '%');
+    const fastOnly = d => d.aa <= medA && d.ga > medG;
+    const fill = d => rural ? (fastOnly(d) ? (d.region === 'Eastern' ? 'var(--amber)' : 'rgba(242,185,91,.35)') : 'var(--other)') : col(d.group);
+    const on = d => rural ? fastOnly(d) : d.group !== 'Other';
+    g.selectAll('circle').data(pts.sort((a, b) => on(a) - on(b))).join('circle')
+      .attr('cx', d => x(d.aa)).attr('cy', d => y(d.ga)).attr('r', d => on(d) ? 7 : 5).style('fill', fill).style('opacity', d => on(d) ? 1 : .55)
+      .attr('stroke', d => d.county === 'Benton' && !rural ? 'var(--ink)' : 'var(--bg)').attr('stroke-width', d => d.county === 'Benton' && !rural ? 2 : 1);
+    const labels = rural ? pts.filter(d => fastOnly(d) && ['Pend Oreille', 'Adams', 'Ferry', 'Okanogan'].includes(d.county)) : pts.filter(d => d.group === '7 growing' || d.county === 'King');
+    const off = {Grant: [-10, -12, 'end'], Lewis: [-10, 4, 'end'], Mason: [-10, 14, 'end'], Franklin: [10, 12, 'start'], Chelan: [10, 12, 'start'], Cowlitz: [10, -6, 'start'], Benton: [10, 4, 'start'], King: [-10, -10, 'end'],
+                 'Pend Oreille': [10, 4, 'start'], Adams: [10, 4, 'start'], Ferry: [-10, 4, 'end'], Lincoln: [-10, 4, 'end'], Okanogan: [10, -6, 'start'], Asotin: [-10, -6, 'end'], Whitman: [10, 12, 'start']};
+    g.selectAll('text.pl').data(labels).join('text').attr('class', d => d.county === 'Benton' ? 'labb' : 'lab')
+      .attr('x', d => x(d.aa) + (off[d.county] || [10])[0]).attr('y', d => y(d.ga) + (off[d.county] || [0, 4])[1]).attr('text-anchor', d => (off[d.county] || [0, 0, 'start'])[2])
+      .text(d => d.county).style('opacity', 0).transition().delay(dur + 200).duration(dur / 2).style('opacity', 1);
+    if (rural) {
+      const fo = pts.filter(fastOnly).concat(C.filter(d => d.county === 'Garfield'));
+      const east = fo.filter(d => d.region === 'Eastern').length;
+      g.append('text').attr('x', W - m.r - 10).attr('y', m.t + 30).attr('text-anchor', 'end').attr('class', 'huge').style('fill', 'var(--amber)').text(east + ' of ' + fo.length);
+      g.append('text').attr('x', W - m.r - 10).attr('y', m.t + 52).attr('text-anchor', 'end').attr('class', 'lab').text('fast-growing, low-volume counties are eastern');
+      g.append('circle').attr('cx', W - m.r - 230).attr('cy', m.t + 78).attr('r', 6).style('fill', 'var(--amber)');
+      g.append('text').attr('x', W - m.r - 218).attr('y', m.t + 82).attr('class', 'lab').text('Eastern');
+      g.append('circle').attr('cx', W - m.r - 140).attr('cy', m.t + 78).attr('r', 6).style('fill', 'rgba(242,185,91,.35)');
+      g.append('text').attr('x', W - m.r - 128).attr('y', m.t + 82).attr('class', 'lab').text('Central');
+      g.append('text').attr('x', W - m.r - 10).attr('y', m.t + 104).attr('text-anchor', 'end').style('fill', 'var(--muted)').text('Garfield (+4 BEVs, +400%) is off the chart but counted');
+    }
+    g.append('text').attr('x', rural ? m.l + 10 : W - m.r - 10).attr('y', m.t + 30).attr('text-anchor', rural ? 'start' : 'end').attr('class', 'mid')
+      .style('fill', rural ? 'var(--amber)' : 'var(--g7)').text(rural ? 'Fast, but few BEVs' : 'Many and fast');
+  },
+
+  scenario(){
+    const g = reset('Registered BEVs in Washington, Oct 2026 → Oct 2030');
+    const yrs = [2026, 2027, 2028, 2029, 2030];
+    const base = yrs.map((yr, k) => ({yr, v: T.b26 + B * k}));
+    const ret = yrs.map((yr, k) => ({yr, v: k < 4 ? T.b26 + B * k : T.b26 + B * 3 + A}));
+    const m = {l: 76, r: 120, t: 30, b: 40};
+    const x = d3.scaleLinear().domain([2026, 2030]).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([200000, 380000]).range([H - m.b, m.t]);
+    g.append('g').attr('class', 'grid').selectAll('line').data(y.ticks(6)).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y);
+    g.append('g').attr('class', 'axis').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSize(0).tickPadding(8).tickFormat(d3.format(',')));
+    g.append('g').attr('class', 'axis').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(yrs).tickSize(0).tickPadding(10).tickFormat(d => 'Oct ' + d));
+    const band = d3.area().x(d => x(d.yr)).y0(d => y(T.b26 + (d.v - T.b26) * .7)).y1(d => y(T.b26 + (d.v - T.b26) * 1.3));
+    g.append('path').datum(base).attr('d', band).style('fill', 'rgba(142,167,162,.14)');
+    const line = d3.line().x(d => x(d.yr)).y(d => y(d.v));
+    [[base, 'var(--ink)', 'Current pace'], [ret, 'var(--g7)', 'Credit returns in 2029']].forEach(([data, c, label], k) => {
+      const p = g.append('path').datum(data).attr('d', line).attr('fill', 'none').style('stroke', c).attr('stroke-width', 2.6);
+      const L = p.node().getTotalLength();
+      p.attr('stroke-dasharray', `${L} ${L}`).attr('stroke-dashoffset', L).transition().delay(k * dur * .6).duration(dur * 1.2).attr('stroke-dashoffset', 0);
+      const end = data[data.length - 1];
+      g.append('circle').attr('cx', x(end.yr)).attr('cy', y(end.v)).attr('r', 5).style('fill', c);
+      g.append('text').attr('x', x(end.yr) + 12).attr('y', y(end.v) - 4).attr('class', 'mid').style('fill', c).text('+' + fmt(end.v - T.b26));
+      g.append('text').attr('x', x(end.yr) + 12).attr('y', y(end.v) + 14).attr('class', 'lab').style('fill', c).text(label);
+    });
+    g.append('text').attr('x', m.l + 10).attr('y', m.t + 14).attr('class', 'lab').style('fill', 'var(--muted)')
+      .text(`Grey band: current pace ±30% (${fmt(Math.round(B * 4 * .7))}–${fmt(Math.round(B * 4 * 1.3))} added)`);
+  },
+
+  ask(){
+    const g = reset('The request: two surveys, one deadline');
+    g.append('text').attr('x', 24).attr('y', 70).attr('class', 'huge').style('fill', 'var(--ink)').text('By Feb 28, 2027');
+    const groups = [
+      {title: 'Survey charging access', sub: '7 growing counties · ' + pct0(pace7) + ' of pace kept', list: G7.sort((a, b) => b.aa - a.aa), c: 'var(--g7)', y: 120},
+      {title: 'Review charger capacity', sub: '5 largest counties · ' + pct0(share5) + ' of new BEVs', list: G5.sort((a, b) => b.aa - a.aa), c: 'var(--g5)', y: 310}
+    ];
+    groups.forEach((gr, k) => {
+      const gg = g.append('g').attr('transform', `translate(24,${gr.y})`).style('opacity', 0);
+      gg.transition().delay(k * 300).duration(dur).style('opacity', 1);
+      gg.append('text').attr('y', 0).attr('class', 'mid').style('fill', gr.c).text(String(k + 1).padStart(2, '0') + '  ' + gr.title);
+      gg.append('text').attr('y', 24).text(gr.sub);
+      const tw = 170, th = 40;
+      gg.selectAll('g.t').data(gr.list).join('g').attr('class', 't').attr('transform', (d, i) => `translate(${(i % 4) * (tw + 10)},${44 + Math.floor(i / 4) * (th + 10)})`)
+        .call(t => {
+          t.append('rect').attr('width', tw).attr('height', th).attr('rx', 8).style('fill', 'none').style('stroke', gr.c).attr('stroke-width', 1.4);
+          t.append('text').attr('x', 14).attr('y', 25).attr('class', d => d.county === 'Benton' || d.county === 'King' ? 'labb' : 'lab').text(d => d.county);
+          t.append('text').attr('x', tw - 12).attr('y', 25).attr('text-anchor', 'end').text(d => '+' + fmt(d.aa));
+        });
+    });
+  },
+
+  rural(){ scenes.scatter('rural'); }
+};
+
+let current = null;
+function show(name){ if (name === current) return; current = name; (scenes[name] || scenes.trend)(); }
+show('trend');
+
+const steps = document.querySelectorAll('.step');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      steps.forEach(s => s.classList.toggle('on', s === e.target));
+      show(e.target.dataset.scene);
+    }
+  });
+}, {root: null, rootMargin: '-45% 0px -45% 0px', threshold: 0});
+steps.forEach(s => io.observe(s));
+steps[0].classList.add('on');
+})();
+</script>
+</body>
+</html>
