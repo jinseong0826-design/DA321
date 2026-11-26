@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WA BEV Charging Review</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+*{box-sizing:border-box}body{margin:0}
+/* Layout: one column of cards; header → KPI row → trend → county comparison (scatter + ranking) → focal case → notes */
+:root{
+  --bg:#F2F5F4; --panel:#FFFFFF; --fg:#16211F; --muted:#5B6B68; --line:#DCE3E1; --grid:#E8EDEC;
+  --c7:#0F766E; --c5:#7CC4BB; --other:#C3CBCA; --bad:#B42318; --ok:#0F766E; --hl:#16211F;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1514; --panel:#152020; --fg:#E6EEEC; --muted:#93A6A2; --line:#26403C; --grid:#1D2D2A;
+  --c7:#4FD1C0; --c5:#2E7A72; --other:#3A4A48; --bad:#F97066; --ok:#4FD1C0; --hl:#E6EEEC; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1514; --panel:#152020; --fg:#E6EEEC; --muted:#93A6A2; --line:#26403C; --grid:#1D2D2A;
+  --c7:#4FD1C0; --c5:#2E7A72; --other:#3A4A48; --bad:#F97066; --ok:#4FD1C0; --hl:#E6EEEC; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:14px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;min-width:0}
+header.card{display:grid;gap:6px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--cond);font-weight:600;font-size:clamp(24px,3.2vw,32px);line-height:1.15;margin:0;text-wrap:balance}
+.lede{margin:0;font-size:15px;max-width:72ch}
+.cta{margin:4px 0 0;font-weight:600;max-width:80ch}
+.cta b{color:var(--c7)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.kpi{display:grid;gap:4px;align-content:start}
+.kpi .lab{font-size:12px;color:var(--muted);font-family:var(--mono);letter-spacing:.03em;text-transform:uppercase}
+.kpi .val{font-family:var(--cond);font-weight:600;font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .sub{font-size:12.5px;color:var(--muted)}
+.kpi .down{color:var(--bad);font-weight:500}
+.vs{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.vs .a{color:var(--c5)} .vs .b{color:var(--c7)} .vs small{font-size:13px;color:var(--muted);font-family:var(--sans);font-weight:400}
+h2{font-family:var(--cond);font-weight:600;font-size:17px;margin:0 0 2px;text-wrap:balance}
+.note{font-size:12.5px;color:var(--muted);margin:0 0 10px}
+.two{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+.chart .lbl{fill:var(--fg);font-family:var(--sans);font-size:11.5px}
+.chart .lblb{fill:var(--fg);font-family:var(--sans);font-size:11.5px;font-weight:600}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;box-shadow:0 6px 18px rgba(0,0,0,.14);white-space:nowrap;transform:translate(-50%,-110%);z-index:5;font-variant-numeric:tabular-nums}
+.tip b{font-weight:600}
+.controls{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.chip{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:4px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--panel);border-color:var(--fg)}
+.chip:focus-visible,.pt:focus-visible{outline:2px solid var(--c7);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.detail{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px 16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.detail .lab{font-size:11.5px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.03em}
+.detail .v{font-weight:600;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);margin-left:6px;font-weight:500;color:var(--muted)}
+.foot{font-size:12.5px;color:var(--muted);display:grid;gap:6px}
+.foot p{margin:0;max-width:110ch}
+.pt{cursor:pointer}
+@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:460px){.kpis{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script>
+const DATA = {"C": [{"county": "Adams", "region": "Eastern", "group": "Other", "b24": 46, "b25": 75, "b26": 106, "ab": 29, "aa": 31, "gb": 63.04, "ga": 41.33, "ev": 0.73}, {"county": "Asotin", "region": "Eastern", "group": "Other", "b24": 59, "b25": 67, "b26": 84, "ab": 8, "aa": 17, "gb": 13.56, "ga": 25.37, "ev": 0.84}, {"county": "Benton", "region": "Central", "group": "7 growing", "b24": 1875, "b25": 2671, "b26": 3367, "ab": 796, "aa": 696, "gb": 42.45, "ga": 26.06, "ev": 2.6}, {"county": "Chelan", "region": "Central", "group": "7 growing", "b24": 963, "b25": 1262, "b26": 1544, "ab": 299, "aa": 282, "gb": 31.05, "ga": 22.35, "ev": 2.88}, {"county": "Clallam", "region": "Southwest", "group": "Other", "b24": 863, "b25": 1090, "b26": 1278, "ab": 227, "aa": 188, "gb": 26.3, "ga": 17.25, "ev": 3.18}, {"county": "Clark", "region": "Southwest", "group": "5 largest", "b24": 9438, "b25": 12240, "b26": 14130, "ab": 2802, "aa": 1890, "gb": 29.69, "ga": 15.44, "ev": 4.9}, {"county": "Columbia", "region": "Eastern", "group": "Other", "b24": 11, "b25": 15, "b26": 18, "ab": 4, "aa": 3, "gb": 36.36, "ga": 20.0, "ev": 0.8}, {"county": "Cowlitz", "region": "Southwest", "group": "7 growing", "b24": 807, "b25": 1023, "b26": 1282, "ab": 216, "aa": 259, "gb": 26.77, "ga": 25.32, "ev": 1.93}, {"county": "Douglas", "region": "Central", "group": "Other", "b24": 341, "b25": 448, "b26": 541, "ab": 107, "aa": 93, "gb": 31.38, "ga": 20.76, "ev": 1.93}, {"county": "Ferry", "region": "Eastern", "group": "Other", "b24": 29, "b25": 34, "b26": 45, "ab": 5, "aa": 11, "gb": 17.24, "ga": 32.35, "ev": 1.09}, {"county": "Franklin", "region": "Eastern", "group": "7 growing", "b24": 548, "b25": 874, "b26": 1085, "ab": 326, "aa": 211, "gb": 59.49, "ga": 24.14, "ev": 1.73}, {"county": "Garfield", "region": "Eastern", "group": "Other", "b24": 0, "b25": 1, "b26": 5, "ab": 1, "aa": 4, "gb": null, "ga": 400.0, "ev": 0.39}, {"county": "Grant", "region": "Eastern", "group": "7 growing", "b24": 521, "b25": 710, "b26": 925, "ab": 189, "aa": 215, "gb": 36.28, "ga": 30.28, "ev": 1.43}, {"county": "Grays Harbor", "region": "Southwest", "group": "Other", "b24": 521, "b25": 691, "b26": 823, "ab": 170, "aa": 132, "gb": 32.63, "ga": 19.1, "ev": 2.06}, {"county": "Island", "region": "Northwest", "group": "Other", "b24": 1642, "b25": 2132, "b26": 2380, "ab": 490, "aa": 248, "gb": 29.84, "ga": 11.63, "ev": 4.59}, {"county": "Jefferson", "region": "Southwest", "group": "Other", "b24": 807, "b25": 999, "b26": 1183, "ab": 192, "aa": 184, "gb": 23.79, "ga": 18.42, "ev": 5.47}, {"county": "King", "region": "Northwest", "group": "5 largest", "b24": 87251, "b25": 106885, "b26": 114063, "ab": 19634, "aa": 7178, "gb": 22.5, "ga": 6.72, "ev": 9.2}, {"county": "Kitsap", "region": "Northwest", "group": "5 largest", "b24": 5094, "b25": 6526, "b26": 7502, "ab": 1432, "aa": 976, "gb": 28.11, "ga": 14.96, "ev": 4.76}, {"county": "Kittitas", "region": "Central", "group": "Other", "b24": 606, "b25": 768, "b26": 943, "ab": 162, "aa": 175, "gb": 26.73, "ga": 22.79, "ev": 3.19}, {"county": "Klickitat", "region": "Central", "group": "Other", "b24": 236, "b25": 315, "b26": 391, "ab": 79, "aa": 76, "gb": 33.47, "ga": 24.13, "ev": 2.9}, {"county": "Lewis", "region": "Southwest", "group": "7 growing", "b24": 548, "b25": 756, "b26": 966, "ab": 208, "aa": 210, "gb": 37.96, "ga": 27.78, "ev": 1.97}, {"county": "Lincoln", "region": "Eastern", "group": "Other", "b24": 32, "b25": 46, "b26": 58, "ab": 14, "aa": 12, "gb": 43.75, "ga": 26.09, "ev": 1.05}, {"county": "Mason", "region": "Southwest", "group": "7 growing", "b24": 719, "b25": 967, "b26": 1179, "ab": 248, "aa": 212, "gb": 34.49, "ga": 21.92, "ev": 2.77}, {"county": "Okanogan", "region": "Central", "group": "Other", "b24": 212, "b25": 255, "b26": 330, "ab": 43, "aa": 75, "gb": 20.28, "ga": 29.41, "ev": 1.43}, {"county": "Pacific", "region": "Southwest", "group": "Other", "b24": 130, "b25": 204, "b26": 246, "ab": 74, "aa": 42, "gb": 56.92, "ga": 20.59, "ev": 2.11}, {"county": "Pend Oreille", "region": "Eastern", "group": "Other", "b24": 51, "b25": 63, "b26": 91, "ab": 12, "aa": 28, "gb": 23.53, "ga": 44.44, "ev": 0.95}, {"county": "Pierce", "region": "Southwest", "group": "5 largest", "b24": 12773, "b25": 16597, "b26": 18712, "ab": 3824, "aa": 2115, "gb": 29.94, "ga": 12.74, "ev": 3.98}, {"county": "San Juan", "region": "Northwest", "group": "Other", "b24": 781, "b25": 912, "b26": 979, "ab": 131, "aa": 67, "gb": 16.77, "ga": 7.35, "ev": 8.35}, {"county": "Skagit", "region": "Northwest", "group": "Other", "b24": 1698, "b25": 2202, "b26": 2522, "ab": 504, "aa": 320, "gb": 29.68, "ga": 14.53, "ev": 3.22}, {"county": "Skamania", "region": "Southwest", "group": "Other", "b24": 168, "b25": 200, "b26": 236, "ab": 32, "aa": 36, "gb": 19.05, "ga": 18.0, "ev": 3.32}, {"county": "Snohomish", "region": "Northwest", "group": "5 largest", "b24": 21513, "b25": 27812, "b26": 30822, "ab": 6299, "aa": 3010, "gb": 29.28, "ga": 10.82, "ev": 5.98}, {"county": "Spokane", "region": "Eastern", "group": "Other", "b24": 3991, "b25": 5142, "b26": 5968, "ab": 1151, "aa": 826, "gb": 28.84, "ga": 16.06, "ev": 2.25}, {"county": "Stevens", "region": "Eastern", "group": "Other", "b24": 166, "b25": 225, "b26": 277, "ab": 59, "aa": 52, "gb": 35.54, "ga": 23.11, "ev": 1.15}, {"county": "Thurston", "region": "Southwest", "group": "Other", "b24": 4993, "b25": 6469, "b26": 7322, "ab": 1476, "aa": 853, "gb": 29.56, "ga": 13.19, "ev": 4.33}, {"county": "Wahkiakum", "region": "Southwest", "group": "Other", "b24": 42, "b25": 59, "b26": 62, "ab": 17, "aa": 3, "gb": 40.48, "ga": 5.08, "ev": 2.85}, {"county": "Walla Walla", "region": "Eastern", "group": "Other", "b24": 355, "b25": 467, "b26": 567, "ab": 112, "aa": 100, "gb": 31.55, "ga": 21.41, "ev": 1.93}, {"county": "Whatcom", "region": "Northwest", "group": "Other", "b24": 3778, "b25": 4797, "b26": 5513, "ab": 1019, "aa": 716, "gb": 26.97, "ga": 14.93, "ev": 4.14}, {"county": "Whitman", "region": "Eastern", "group": "Other", "b24": 264, "b25": 347, "b26": 425, "ab": 83, "aa": 78, "gb": 31.44, "ga": 22.48, "ev": 2.3}, {"county": "Yakima", "region": "Central", "group": "Other", "b24": 944, "b25": 1332, "b26": 1587, "ab": 388, "aa": 255, "gb": 41.1, "ga": 19.14, "ev": 1.09}], "M": [{"m": "2023-11-30", "v": 3065, "cars": 1547}, {"m": "2023-12-31", "v": 3388, "cars": 2545}, {"m": "2024-01-31", "v": 4247, "cars": 2534}, {"m": "2024-02-29", "v": 3395, "cars": -6652}, {"m": "2024-03-31", "v": 2542, "cars": 559}, {"m": "2024-04-30", "v": 3585, "cars": 9792}, {"m": "2024-05-31", "v": 3322, "cars": 1592}, {"m": "2024-06-30", "v": 2295, "cars": -1716}, {"m": "2024-07-31", "v": 4249, "cars": 6082}, {"m": "2024-08-31", "v": 4607, "cars": 3491}, {"m": "2024-09-30", "v": 4383, "cars": 3493}, {"m": "2024-10-31", "v": 4745, "cars": 7796}, {"m": "2024-11-30", "v": 3278, "cars": 2274}, {"m": "2024-12-31", "v": 3414, "cars": 7613}, {"m": "2025-01-31", "v": 5139, "cars": 13867}, {"m": "2025-02-28", "v": 2970, "cars": 1732}, {"m": "2025-03-31", "v": 2630, "cars": -6377}, {"m": "2025-04-30", "v": 3999, "cars": 17388}, {"m": "2025-05-31", "v": 2836, "cars": 3105}, {"m": "2025-06-30", "v": 2687, "cars": 7883}, {"m": "2025-07-31", "v": 4245, "cars": 9717}, {"m": "2025-08-31", "v": 3693, "cars": 3290}, {"m": "2025-09-30", "v": 3388, "cars": 3342}, {"m": "2025-10-31", "v": 4583, "cars": 4231}, {"m": "2025-11-30", "v": 2054, "cars": -4118}, {"m": "2025-12-31", "v": 1159, "cars": 4135}, {"m": "2026-01-31", "v": 2864, "cars": 1734}, {"m": "2026-02-28", "v": 1956, "cars": 3887}, {"m": "2026-03-31", "v": 1714, "cars": -12247}, {"m": "2026-04-30", "v": 3839, "cars": 7075}, {"m": "2026-05-31", "v": 2243, "cars": -15134}, {"m": "2026-06-30", "v": 2244, "cars": -1269}, {"m": "2026-07-31", "v": 2897, "cars": -15860}, {"m": "2026-08-31", "v": 816, "cars": -33050}, {"m": "2026-09-30", "v": -363, "cars": -39939}, {"m": "2026-10-31", "v": 456, "cars": -74076}]};
+</script>
+<script>
+(function(){
+const h = React.createElement, {useState, useRef} = React;
+const C = DATA.C, M = DATA.M;
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const pct = (n, d=1) => (n*100).toFixed(d) + '%';
+const sum = (a, f) => a.reduce((t, d) => t + f(d), 0);
+const median = a => { const s = [...a].sort((x, y) => x - y), n = s.length; return n % 2 ? s[(n-1)/2] : (s[n/2-1] + s[n/2]) / 2; };
+const G7 = C.filter(d => d.group === '7 growing'), G5 = C.filter(d => d.group === '5 largest');
+const T = {aa: sum(C, d => d.aa), ab: sum(C, d => d.ab), b24: sum(C, d => d.b24), b25: sum(C, d => d.b25), b26: sum(C, d => d.b26)};
+const growth = T.b26 / T.b25 - 1, growthBefore = T.b25 / T.b24 - 1;
+const pace5 = sum(G5, d => d.aa) / sum(G5, d => d.ab), pace7 = sum(G7, d => d.aa) / sum(G7, d => d.ab);
+const by2030 = T.aa * 4, creditBack = T.aa * 3 + T.ab;
+const medA = median(C.map(d => d.aa)), medG = median(C.map(d => d.ga));
+const avg = (a, b) => { const s = M.filter(d => d.m >= a && d.m <= b); return sum(s, d => d.v) / s.length; };
+const before = avg('2024-11-30', '2025-10-31'), after = avg('2025-11-30', '2026-10-31');
+const PEERS = ['Whatcom', 'Yakima', 'Kitsap', 'Thurston', 'Spokane'];
+const peerMed = median(C.filter(d => PEERS.includes(d.county)).map(d => d.ga));
+const color = g => g === '7 growing' ? 'var(--c7)' : g === '5 largest' ? 'var(--c5)' : 'var(--other)';
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const mlabel = s => MON[+s.slice(5,7)-1] + ' ' + s.slice(0,4);
+const byName = Object.fromEntries(C.map(d => [d.county, d]));
+
+function relX(e, el, W){ const r = el.getBoundingClientRect(); return (e.clientX - r.left) / r.width * W; }
+
+function Tip({x, y, W, H, children}){
+  return h('div', {className: 'tip', style: {left: (x / W * 100) + '%', top: (y / H * 100) + '%'}}, children);
+}
+
+/* ---------- KPI row ---------- */
+function Kpis(){
+  return h('section', {className: 'kpis', 'aria-label': 'Key numbers'},
+    h('div', {className: 'card kpi'},
+      h('div', {className: 'lab'}, 'BEVs added · 12 months'),
+      h('div', {className: 'val'}, '+' + fmt(T.aa)),
+      h('div', {className: 'sub'}, h('span', {className: 'down'}, '▼ ' + pct(1 - T.aa / T.ab, 0)), ' vs +' + fmt(T.ab) + ' the year before')),
+    h('div', {className: 'card kpi'},
+      h('div', {className: 'lab'}, 'Statewide BEV growth'),
+      h('div', {className: 'val'}, pct(growth)),
+      h('div', {className: 'sub'}, h('span', {className: 'down'}, '▼'), ' from ' + pct(growthBefore) + ' the year before')),
+    h('div', {className: 'card kpi'},
+      h('div', {className: 'lab'}, 'Pace kept after the credit'),
+      h('div', {className: 'val vs'}, h('span', {className: 'a'}, pct(pace5, 0)), h('small', null, 'vs'), h('span', {className: 'b'}, pct(pace7, 0))),
+      h('div', {className: 'sub'}, '5 largest vs 7 growing counties (BEVs added after ÷ before)')),
+    h('div', {className: 'card kpi'},
+      h('div', {className: 'lab'}, 'BEVs added by Oct 2030'),
+      h('div', {className: 'val'}, '+' + fmt(by2030)),
+      h('div', {className: 'sub'}, '±30%: ' + fmt(by2030*0.7) + '–' + fmt(by2030*1.3) + ' · credit back in 2029: +' + Math.round((creditBack/by2030 - 1)*100) + '%'))
+  );
+}
+
+/* ---------- Trend ---------- */
+function Trend(){
+  const [hi, setHi] = useState(null);
+  const W = 760, H = 270, ml = 52, mr = 14, mt = 18, mb = 34, iw = W - ml - mr, ih = H - mt - mb;
+  const y0 = -1000, y1 = 6000;
+  const x = i => ml + i / (M.length - 1) * iw, y = v => mt + (y1 - v) / (y1 - y0) * ih;
+  const iCredit = M.findIndex(d => d.m === '2025-09-30'), iSplit = M.findIndex(d => d.m === '2025-10-31');
+  const iAug = M.findIndex(d => d.m === '2026-07-31');
+  const iB0 = M.findIndex(d => d.m === '2024-10-31');
+  const path = M.map((d, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(d.v).toFixed(1)).join('');
+  const ticks = [-1000, 0, 1000, 2000, 3000, 4000, 5000, 6000];
+  const move = e => { const i = Math.round((relX(e, e.currentTarget.ownerSVGElement, W) - ml) / iw * (M.length - 1)); setHi(Math.max(0, Math.min(M.length - 1, i))); };
+  const d = hi == null ? null : M[hi];
+  return h('section', {className: 'card', id: 'trend'},
+    h('h2', null, 'Monthly BEVs added'),
+    h('p', {className: 'note'}, 'Dashed lines: 12-month averages, ' + fmt(before) + ' → ' + fmt(after) + ' a month.'),
+    h('div', {className: 'chart'},
+      h('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `Line chart of monthly BEV additions from ${mlabel(M[0].m)} to ${mlabel(M[M.length-1].m)}; average fell from ${fmt(before)} to ${fmt(after)} per month after September 2025.`},
+        h('rect', {x: x(iAug), y: mt, width: x(M.length-1) - x(iAug), height: ih, style: {fill: 'var(--grid)'}}),
+        ticks.map(t => h('g', {key: t},
+          h('line', {x1: ml, x2: W - mr, y1: y(t), y2: y(t), style: {stroke: t === 0 ? 'var(--muted)' : 'var(--grid)'}, strokeWidth: 1}),
+          h('text', {x: ml - 8, y: y(t) + 4, textAnchor: 'end'}, t.toLocaleString('en-US')))),
+        M.map((m, i) => (m.m.slice(5,7) === '01' || i === 0) ? h('text', {key: m.m, x: x(i), y: H - 10, textAnchor: 'middle'}, mlabel(m.m)) : null),
+        h('line', {x1: x(iB0), x2: x(iSplit), y1: y(before), y2: y(before), strokeDasharray: '5 4', strokeWidth: 1.5, style: {stroke: 'var(--muted)'}}),
+        h('line', {x1: x(iSplit), x2: x(M.length-1), y1: y(after), y2: y(after), strokeDasharray: '5 4', strokeWidth: 1.5, style: {stroke: 'var(--bad)'}}),
+        h('line', {x1: x(iCredit), x2: x(iCredit), y1: mt, y2: mt + ih, strokeWidth: 1.2, strokeDasharray: '2 3', style: {stroke: 'var(--bad)'}}),
+        h('text', {x: x(iCredit) + 6, y: mt + 12, className: 'lbl', style: {fill: 'var(--bad)'}}, 'Sep 30, 2025: federal credit ended [R1]'),
+        h('text', {x: x(M.length-1) - 4, y: mt + ih - 8, textAnchor: 'end', className: 'lbl'}, 'Aug–Oct 2026: all passenger cars fell too'),
+        h('path', {d: path, fill: 'none', strokeWidth: 2.2, strokeLinejoin: 'round', style: {stroke: 'var(--fg)'}}),
+        M.map((m, i) => h('circle', {key: m.m, cx: x(i), cy: y(m.v), r: hi === i ? 5 : 2.6, style: {fill: i > iSplit ? 'var(--bad)' : 'var(--fg)'}})),
+        hi != null && h('line', {x1: x(hi), x2: x(hi), y1: mt, y2: mt + ih, style: {stroke: 'var(--muted)'}, strokeWidth: 1}),
+        h('rect', {x: ml, y: mt, width: iw, height: ih, fill: 'transparent', onMouseMove: move, onMouseLeave: () => setHi(null), onTouchStart: e => move(e.touches[0] ? Object.assign({currentTarget: e.currentTarget}, {clientX: e.touches[0].clientX}) : e)})
+      ),
+      d && h(Tip, {x: x(hi), y: y(d.v), W, H},
+        h('b', null, mlabel(d.m)), h('br'), 'BEVs added: ' + (d.v >= 0 ? '+' : '') + fmt(d.v), h('br'), 'All passenger cars: ' + (d.cars >= 0 ? '+' : '') + fmt(d.cars)))
+  );
+}
+
+/* ---------- Scatter ---------- */
+const FILTERS = [['All counties', null], ['7 growing', '7 growing'], ['5 largest', '5 largest'], ['Other', 'Other']];
+function Scatter({sel, setSel}){
+  const [f, setF] = useState(null), [hov, setHov] = useState(null);
+  const W = 560, H = 380, ml = 46, mr = 14, mt = 16, mb = 42, iw = W - ml - mr, ih = H - mt - mb;
+  const lo = Math.log10(2), hiL = Math.log10(12000);
+  const x = v => ml + (Math.log10(v) - lo) / (hiL - lo) * iw, y = v => mt + (48 - v) / 48 * ih;
+  const pts = C.filter(d => d.county !== 'Garfield');
+  const show = d => !f || d.group === f;
+  const order = [...pts].sort((a, b) => (show(a) - show(b)) || (a.group === 'Other' ? -1 : 1));
+  const labelled = d => d.county === sel || d.county === 'King' || d.county === 'Benton' || (f && f !== 'Other' && d.group === f);
+  const hd = hov && byName[hov];
+  return h('section', {className: 'card', id: 'counties'},
+    h('h2', null, 'BEVs added vs growth, by county'),
+    h('p', {className: 'note'}, 'Dashed lines: county medians (' + fmt(medA) + ' BEVs, ' + medG.toFixed(1) + '%). Garfield left out.'),
+    h('div', {className: 'controls', role: 'group', 'aria-label': 'Highlight a group'},
+      FILTERS.map(([lab, v]) => h('button', {key: lab, className: 'chip', 'aria-pressed': f === v, onClick: () => setF(v)}, lab))),
+    h('div', {className: 'chart'},
+      h('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Scatter plot of BEVs added (log scale) against growth rate for 38 counties, with median lines; seven counties are above both medians.'},
+        h('rect', {x: x(medA), y: mt, width: W - mr - x(medA), height: y(medG) - mt, style: {fill: 'var(--c7)', opacity: .07}}),
+        [0, 10, 20, 30, 40].map(t => h('g', {key: 'y' + t},
+          h('line', {x1: ml, x2: W - mr, y1: y(t), y2: y(t), style: {stroke: 'var(--grid)'}}),
+          h('text', {x: ml - 8, y: y(t) + 4, textAnchor: 'end'}, t + '%'))),
+        [10, 100, 1000, 10000].map(t => h('g', {key: 'x' + t},
+          h('line', {x1: x(t), x2: x(t), y1: mt, y2: mt + ih, style: {stroke: 'var(--grid)'}}),
+          h('text', {x: x(t), y: H - 22, textAnchor: 'middle'}, t.toLocaleString('en-US')))),
+        h('text', {x: ml + iw / 2, y: H - 4, textAnchor: 'middle'}, 'BEVs added, Oct 2025 → Oct 2026 (log scale)'),
+        h('line', {x1: x(medA), x2: x(medA), y1: mt, y2: mt + ih, strokeDasharray: '5 4', style: {stroke: 'var(--hl)'}}),
+        h('line', {x1: ml, x2: W - mr, y1: y(medG), y2: y(medG), strokeDasharray: '5 4', style: {stroke: 'var(--hl)'}}),
+        h('text', {x: W - mr - 4, y: mt + 12, textAnchor: 'end', className: 'lblb', style: {fill: 'var(--c7)'}}, 'Many and fast'),
+        order.map(d => {
+          const on = show(d), isSel = d.county === sel;
+          return h('g', {key: d.county, className: 'pt', tabIndex: on ? 0 : -1, role: 'button', 'aria-label': `${d.county}: ${fmt(d.aa)} BEVs added, ${d.ga.toFixed(1)}% growth`,
+              onMouseEnter: () => setHov(d.county), onMouseLeave: () => setHov(null), onFocus: () => setHov(d.county), onBlur: () => setHov(null),
+              onClick: () => setSel(d.county), onKeyDown: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSel(d.county); } }},
+            h('circle', {cx: x(d.aa), cy: y(d.ga), r: d.group === 'Other' ? 5 : 6.5, style: {fill: color(d.group), opacity: on ? 1 : .18, stroke: isSel ? 'var(--hl)' : 'var(--panel)'}, strokeWidth: isSel ? 2.5 : 1}),
+            on && labelled(d) && h('text', {x: x(d.aa) + 9, y: y(d.ga) + 4, className: isSel ? 'lblb' : 'lbl'}, d.county));
+        })
+      ),
+      hd && h(Tip, {x: x(hd.aa), y: y(hd.ga) - 6, W, H},
+        h('b', null, hd.county), ' · ' + hd.region, h('br'), '+' + fmt(hd.aa) + ' BEVs · ' + hd.ga.toFixed(1) + '% growth', h('br'), 'Pace kept: ' + pct(hd.aa / hd.ab, 0))),
+    h('div', {className: 'legend'},
+      h('span', null, h('i', {style: {background: 'var(--c7)'}}), '7 growing counties: survey charging access'),
+      h('span', null, h('i', {style: {background: 'var(--c5)'}}), '5 largest counties: review charger capacity'),
+      h('span', null, h('i', {style: {background: 'var(--other)'}}), 'Other counties'))
+  );
+}
+
+function Detail({name}){
+  const d = byName[name];
+  if (!d) return null;
+  const items = [
+    ['BEVs added', '+' + fmt(d.ab) + ' → +' + fmt(d.aa)],
+    ['Growth', (d.gb == null ? 'n/a' : d.gb.toFixed(1) + '%') + ' → ' + d.ga.toFixed(1) + '%'],
+    ['Pace kept', d.ab > 0 ? pct(d.aa / d.ab, 0) : 'n/a'],
+    ['EV share, Oct 2025', d.ev.toFixed(2) + '%'],
+    ['By 2030 at current pace', '+' + fmt(d.aa * 4)]
+  ];
+  return h('div', null,
+    h('div', {className: 'detail', 'aria-live': 'polite'},
+      h('div', {style: {gridColumn: '1 / -1'}}, h('b', null, d.county), h('span', {className: 'tag'}, d.group === 'Other' ? d.region : d.group + ' · ' + d.region)),
+      items.map(([k, v]) => h('div', {key: k}, h('div', {className: 'lab'}, k), h('div', {className: 'v'}, v)))));
+}
+
+/* ---------- Ranking ---------- */
+const METRICS = {
+  growth: {lab: 'Growth (%)', get: d => d.ga, fmt: v => v.toFixed(1) + '%', ref: () => medG, refLab: 'median'},
+  added:  {lab: 'BEVs added', get: d => d.aa, fmt: v => fmt(v), ref: () => medA, refLab: 'median'},
+  pace:   {lab: 'Pace kept', get: d => d.aa / d.ab, fmt: v => pct(v, 0), ref: () => 1, refLab: 'same as before'}
+};
+function Ranking({sel, setSel}){
+  const [k, setK] = useState('growth'); const m = METRICS[k];
+  const rows = [...G7, ...G5].sort((a, b) => m.get(b) - m.get(a));
+  const W = 520, rh = 25, mt = 22, ml = 92, mr = 64, H = mt + rows.length * rh + 6, iw = W - ml - mr;
+  const max = Math.max(...rows.map(m.get), m.ref()) * 1.02;
+  const x = v => ml + v / max * iw;
+  return h('section', {className: 'card', id: 'ranking'},
+    h('h2', null, 'Survey counties, ranked'),
+    
+    h('div', {className: 'controls', role: 'group', 'aria-label': 'Measure'},
+      Object.entries(METRICS).map(([key, v]) => h('button', {key, className: 'chip', 'aria-pressed': k === key, onClick: () => setK(key)}, v.lab))),
+    h('div', {className: 'chart'},
+      h('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Bar chart ranking the 7 growing and 5 largest counties by ' + m.lab},
+        rows.map((d, i) => {
+          const yy = mt + i * rh, v = m.get(d), isSel = d.county === sel;
+          return h('g', {key: d.county, className: 'pt', tabIndex: 0, role: 'button', 'aria-label': `${d.county}: ${m.fmt(v)}`, onClick: () => setSel(d.county),
+              onKeyDown: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSel(d.county); } }},
+            h('text', {x: ml - 8, y: yy + rh / 2 + 4, textAnchor: 'end', className: isSel ? 'lblb' : 'lbl'}, d.county),
+            h('rect', {x: ml, y: yy + 4, width: Math.max(1, x(v) - ml), height: rh - 8, rx: 3, style: {fill: color(d.group), stroke: isSel ? 'var(--hl)' : 'none'}, strokeWidth: 2}),
+            h('text', {x: x(v) + 6, y: yy + rh / 2 + 4}, m.fmt(v)));
+        }),
+        h('line', {x1: x(m.ref()), x2: x(m.ref()), y1: mt - 4, y2: H - 4, strokeDasharray: '5 4', style: {stroke: 'var(--hl)'}}),
+        h('text', {x: x(m.ref()), y: mt - 8, textAnchor: 'middle'}, m.refLab + ' ' + m.fmt(m.ref()))
+      ))
+  );
+}
+
+/* ---------- Focal case ---------- */
+function Focal({sel, setSel}){
+  const rows = C.filter(d => d.county === 'Benton' || PEERS.includes(d.county)).sort((a, b) => b.ga - a.ga);
+  const W = 560, H = 230, ml = 40, mr = 10, mt = 24, mb = 30, iw = W - ml - mr, ih = H - mt - mb;
+  const bw = iw / rows.length, y = v => mt + (30 - v) / 30 * ih;
+  return h('section', {className: 'card', id: 'focal'},
+    h('h2', null, 'Focal case: Benton grew ' + byName.Benton.ga.toFixed(1) + '% vs ' + peerMed.toFixed(1) + '% for similar-size counties'),
+    h('p', {className: 'note'}, 'Growth, Oct 2025 → Oct 2026, against five counties with 140,000–330,000 passenger cars. Benton also kept ' + pct(byName.Benton.aa / byName.Benton.ab, 0) + ' of its earlier additions.'),
+    h('div', {className: 'chart'},
+      h('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Bar chart of growth for Benton and five similar-size counties'},
+        [0, 10, 20, 30].map(t => h('g', {key: t},
+          h('line', {x1: ml, x2: W - mr, y1: y(t), y2: y(t), style: {stroke: 'var(--grid)'}}),
+          h('text', {x: ml - 6, y: y(t) + 4, textAnchor: 'end'}, t + '%'))),
+        rows.map((d, i) => {
+          const isB = d.county === 'Benton', isSel = d.county === sel;
+          return h('g', {key: d.county, className: 'pt', onClick: () => setSel(d.county)},
+            h('rect', {x: ml + i * bw + bw * .18, y: y(d.ga), width: bw * .64, height: y(0) - y(d.ga), rx: 3, style: {fill: isB ? 'var(--c7)' : 'var(--other)', stroke: isSel ? 'var(--hl)' : 'none'}, strokeWidth: 2}),
+            h('text', {x: ml + i * bw + bw / 2, y: y(d.ga) - 6, textAnchor: 'middle', className: isB ? 'lblb' : 'lbl'}, d.ga.toFixed(1) + '%'),
+            h('text', {x: ml + i * bw + bw / 2, y: H - 10, textAnchor: 'middle', className: isB ? 'lblb' : 'lbl'}, d.county));
+        }),
+        h('line', {x1: ml, x2: W - mr, y1: y(peerMed), y2: y(peerMed), strokeDasharray: '5 4', style: {stroke: 'var(--hl)'}}),
+        h('text', {x: W - mr, y: y(peerMed) - 6, textAnchor: 'end'}, 'peer median ' + peerMed.toFixed(1) + '%')
+      ))
+  );
+}
+
+function App(){
+  const [sel, setSel] = useState('Benton');
+  return h('main', {className: 'wrap'},
+    h('header', {className: 'card'},
+      h('h1', null, 'WA BEV Charging Review'),
+      h('p', {className: 'lede'}, 'BEV additions halved after the federal credit ended: ' + fmt(before) + ' → ' + fmt(after) + ' a month.'),
+      h('p', {className: 'cta'}, 'By ', h('b', null, 'Feb 28, 2027'), ': survey charging access in the 7 growing counties, and charger capacity in the 5 largest.'),
+      h('div', {className: 'meta'}, h('span', null, 'Data: WA DOL, downloaded 2026-11-19'), h('span', null, 'Not in the data: chargers, usage, home charging'), h('span', null, 'Jinseong Park · DA321'))),
+    h(Kpis),
+    h(Trend),
+    h('div', {className: 'two'}, h(Scatter, {sel, setSel}), h(Ranking, {sel, setSel}))
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+})();
+</script>
+
+</body>
+</html>
