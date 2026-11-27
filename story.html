@@ -435,7 +435,7 @@ const scenes = {
       .style('cursor', 'default')
       .on('mouseenter', function (e, f) {
         const d = byName[f.properties.name];
-        d3.select(this).style('stroke', 'var(--ink)').attr('stroke-width', 2).raise();
+        d3.select(this).style('stroke', 'var(--ink)').attr('stroke-width', 2).raise(); g.selectAll('text.cn').raise();   // keep names above the raised county
         info.text(`${d.county} · ${d.region} · +${fmt(d.aa)} BEVs · ${d.ga.toFixed(1)}% growth`);
       })
       .on('mouseleave', function () { d3.select(this).style('stroke', 'var(--bg2)').attr('stroke-width', 1.2); info.text('Point at a county for its numbers'); })
